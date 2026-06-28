@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Art - Premium Edition</title>
+    <style>
+        :root {
+            --primary: #FF7EB3; --primary-shadow: #D8558A;
+            --secondary: #21D4FD; --secondary-shadow: #149BC2;
+            --accent: #F9D423; --accent-shadow: #C9A913;
+            --dark: #2C3E50; --panel-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.9);
+        }
+
+        * { box-sizing: border-box; user-select: none; font-family: 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative;
+            background: linear-gradient(-45deg, #fde4ec, #e3f2fd, #f3e5f5, #e8f5e9); background-size: 400% 400%; animation: pastelMove 25s ease-in-out infinite alternate;
+        }
+
+        @keyframes pastelMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .hidden { display: none !important; }
+        
+        .panel {
+            background: var(--panel-bg); padding: 40px; border-radius: 40px; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 2px solid var(--glass-border); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05), inset 0 4px 10px rgba(255, 255, 255, 0.8);
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .corner-btn {
+            position: fixed; top: 20px; z-index: 10000; color: var(--dark); border: none; border-radius: 18px; width: 55px; height: 55px; font-size: 26px;
+            cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 2px solid white; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .corner-btn:active { transform: translateY(4px); box-shadow: 0 4px 5px rgba(0,0,0,0.05); }
+        #home-btn { left: 20px; } #fullscreen-btn { right: 20px; }
+
+        .watermark {
+            position: fixed; bottom: 12px; width: 100%; text-align: center; color: rgba(0, 0, 0, 0.35); font-weight: 900;
+            letter-spacing: 3px; font-size: 14px; pointer-events: none; z-index: 9999; text-transform: uppercase; text-shadow: 0px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .btn-3d {
+            padding: 20px 45px; font-size: 22px; font-weight: 900; color: white; border: none; border-radius: 25px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px; transition: all 0.1s; margin: 12px; outline: none; position: relative; box-shadow: inset 0 4px 6px rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn-play { background: linear-gradient(135deg, #42E695, #3BB2B8); box-shadow: 0 8px 0 #2E8B8F, 0 15px 25px rgba(66, 230, 149, 0.4), inset 0 4px 6px rgba(255, 255, 255, 0.4); }
+        .btn-play:active { transform: translateY(8px); box-shadow: 0 0 0 #2E8B8F, inset 0 4px 6px rgba(255, 255, 255, 0.4); }
+        .btn-edit { background: linear-gradient(135deg, #F9D423, #FF4E50); box-shadow: 0 8px 0 #C9393C, 0 15px 25px rgba(255, 78, 80, 0.4), inset 0 4px 6px rgba(255, 255, 255, 0.5); }
+        .btn-edit:active { transform: translateY(8px); box-shadow: 0 0 0 #C9393C, inset 0 4px 6px rgba(255, 255, 255, 0.5); }
+        .btn-action { background: linear-gradient(135deg, #FF7EB3, #FF758C); box-shadow: 0 8px 0 #D85566, 0 15px 25px rgba(255, 126, 179, 0.4), inset 0 4px 6px rgba(255, 255, 255, 0.5); }
+        .btn-action:active { transform: translateY(8px); box-shadow: 0 0 0 #D85566, inset 0 4px 6px rgba(255, 255, 255, 0.5); }
+
+        .btn-skip { 
+            background: rgba(255,255,255,0.7); color: var(--dark); border: 2px solid white; box-shadow: 0 6px 0 rgba(200,205,215,0.8);
+            font-size: 16px; font-weight: 800; padding: 12px 25px; border-radius: 18px; transition: all 0.1s;
+        }
+        .btn-skip:active { transform: translateY(6px); box-shadow: 0 0 0 rgba(200,205,215,0.8); }
+        
+        .btn-lang {
+            background: rgba(255,255,255,0.9); color: var(--dark); border: 2px solid white; box-shadow: 0 4px 0 rgba(200,205,215,0.6);
+            font-size: 14px; font-weight: 800; padding: 10px 20px; border-radius: 15px; margin-top: 30px; cursor: pointer; transition: all 0.1s;
+        }
+        .btn-lang:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(200,205,215,0.6); }
+
+        .screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; }
+
+        h1 { font-size: 5.5rem; color: #ffffff; text-align: center; margin: 0 0 35px 0; font-weight: 900; letter-spacing: 2px; text-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 20px 40px rgba(33, 212, 253, 0.3); animation: floatTitle 4s ease-in-out infinite alternate; }
+        @keyframes floatTitle { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
+
+        h2 { color: var(--dark); margin-top: 0; text-align: center; font-size: 2.2rem; font-weight: 800; }
+        h3 { color: #576574; margin-top: 0; text-align: center; font-size: 1.5rem; font-weight: 700; }
+
+        .imaginacion-title { font-size: 2.8rem; background: linear-gradient(135deg, #FF7EB3, #A770EF, #21D4FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 5px 0; text-align: center; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); font-weight: 900; }
+        .editor-subtitle { color: #576574; font-size: 1rem; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 25px; font-weight: 800; text-align: center; }
+
+        .grid-container {
+            display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); gap: 2px; background-color: var(--dark); 
+            border: 4px solid var(--dark); border-radius: 8px; aspect-ratio: 1; box-shadow: 0 0 0 8px rgba(255,255,255,0.9), 0 20px 40px rgba(0,0,0,0.15); margin: 15px; 
+        }
+        
+        .cell { background-color: #ffffff; cursor: pointer; border-radius: 2px; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1); transition: transform 0.05s ease, background-color 0.1s ease; }
+        .cell:active { transform: scale(0.9); border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.15); }
+
+        #presentation-screen .grid-container { width: 70vmin; max-width: 550px; }
+        .split-layout { display: flex; width: 100%; height: 85vh; justify-content: center; align-items: center; gap: 40px; }
+        .split-side { display: flex; flex-direction: column; align-items: center; flex: 1; max-width: 450px; }
+        .split-side .grid-container { width: 45vmin; max-width: 400px; border-width: 3px; gap: 2px; }
+
+        .palette-container { background: rgba(255,255,255,0.8); padding: 20px; border-radius: 25px; box-shadow: inset 0 4px 10px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05); border: 2px solid white; margin-top: 15px; width: 100%; }
+        .palette { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .color-btn { width: 45px; height: 45px; border-radius: 12px; border: 3px solid white; box-shadow: 0 6px 12px rgba(0,0,0,0.15), inset 2px 2px 4px rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .color-btn:hover { transform: translateY(-5px) scale(1.1); }
+        .color-btn.selected { transform: scale(1.25); border-color: var(--dark); box-shadow: 0 0 0 2px white; z-index: 2; }
+        .eraser-btn { background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%232C3E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16C2.5 15.5 2.5 14.5 3 14L13 4C13.5 3.5 14.5 3.5 15 4L20 9C20.5 9.5 20.5 10.5 20 11L11 20"/></svg>') no-repeat center center; background-color: #f1f2f6; background-size: 60%; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; }
+        .modal-content { background: var(--panel-bg); padding: 40px; border-radius: 40px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.1), inset 0 4px 10px rgba(255,255,255,0.8); border: 2px solid white; max-height: 95vh; overflow-y: auto; width: 95%; max-width: 500px; }
+        .modal-content p { color: #576574; font-size: 1.2rem; font-weight: 600; }
+
+        .difficulty-cards-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 10px; margin-bottom: 30px; }
+        .diff-card { background: rgba(255,255,255,0.9); border-radius: 30px; padding: 25px 20px; flex: 1; min-width: 220px; max-width: 260px; display: flex; flex-direction: column; align-items: center; border: 2px solid white; box-shadow: 0 15px 30px rgba(0,0,0,0.05); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .diff-card:active { transform: scale(0.95); }
+        .card-icon { font-size: 3.5rem; margin-bottom: 10px; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.15)); }
+        .diff-card h3 { margin: 0 0 10px 0 !important; font-size: 1.4rem !important; color: var(--dark) !important; letter-spacing: 0 !important; text-transform: none !important; }
+        .diff-card p { font-size: 1rem !important; line-height: 1.4; margin-bottom: 20px; color: #576574; flex-grow: 1; }
+        .facil-card { border-bottom: 8px solid #3BB2B8; } .medio-card { border-bottom: 8px solid #F9D423; } .avanzado-card { border-bottom: 8px solid #FF7EB3; }
+
+        .level-manager-section { margin-bottom: 25px; text-align: left; background: rgba(255,255,255,0.6); padding: 20px; border-radius: 25px; border: 2px solid white; }
+        .level-item { display: flex; align-items: center; justify-content: space-between; background: white; padding: 12px; border-radius: 15px; margin-bottom: 10px; color: var(--dark); font-weight: 700; }
+        .mini-grid { display: grid; grid-template-columns: repeat(10, 4px); grid-template-rows: repeat(10, 4px); gap: 1px; background-color: var(--dark); padding: 2px; border-radius: 4px; }
+        .mini-cell { width: 4px; height: 4px; border-radius: 1px; }
+        .level-controls button { background: #f1f2f6; border: none; border-radius: 10px; padding: 8px 12px; cursor: pointer; margin-left: 5px; color: var(--dark); }
+        .btn-delete { color: #FF4E50 !important; background: rgba(255, 78, 80, 0.15) !important;}
+        
+        .toast { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%) translateY(150px); background: rgba(44, 62, 80, 0.95); color: white; padding: 18px 35px; border-radius: 25px; font-size: 1.3rem; font-weight: 800; letter-spacing: 1px; box-shadow: 0 20px 40px rgba(0,0,0,0.25), inset 0 2px 5px rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.1); z-index: 99999; opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px); }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        
+                @media (max-width: 768px) {
+            h1 { font-size: 3rem; margin-bottom: 20px; }
+            h2 { font-size: 1.8rem; }
+            .imaginacion-title { font-size: 2rem; }
+            .panel { padding: 20px; border-radius: 25px; }
+            .btn-3d { padding: 15px 25px; font-size: 16px; margin: 8px; }
+            
+            .split-layout { flex-direction: column; gap: 15px; height: 100%; justify-content: flex-start; overflow-y: auto; padding-top: 60px; padding-bottom: 80px; }
+            .split-side { max-width: 100%; width: 100%; }
+            
+            #game-screen .split-side .grid-container { width: 55vmin; max-width: 300px; margin: 5px 0; }
+            #presentation-screen .grid-container { width: 85vmin; }
+            #editor-screen .grid-container { width: 75vmin; }
+            
+            .color-btn { width: 35px; height: 35px; border-radius: 8px; }
+            .palette-container { padding: 10px; margin-top: 10px; }
+            
+            .corner-btn { width: 45px; height: 45px; font-size: 20px; top: 10px; }
+            #home-btn { left: 10px; } 
+            #fullscreen-btn { right: 10px; }
+            
+            .modal-content { padding: 25px 15px; }
+            .difficulty-cards-container { flex-direction: column; flex-wrap: nowrap; align-items: center; gap: 15px; }
+            .diff-card { width: 100%; max-width: 300px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast-notification" class="toast">Notificación</div>
+
+    <button id="home-btn" class="corner-btn" data-i18n-title="tooltip_home" title="Inicio" onclick="returnToMenu()">🏠</button>
+    <button id="fullscreen-btn" class="corner-btn" data-i18n-title="tooltip_fullscreen" title="Pantalla Completa" onclick="toggleFullScreen()">⛶</button>
+    
+    <div class="watermark" data-i18n="watermark">Juega y Aprende Labs 2026</div>
+
+    <div id="welcome-screen" class="screen">
+        <h1>PIXEL ART</h1>
+        <div class="panel">
+            <button class="btn-3d btn-play" onclick="openDifficultyModal()" data-i18n="btn_play_levels">▶ Jugar Niveles</button>
+            <button class="btn-3d btn-edit" onclick="openEditor()" data-i18n="btn_create_level">✏️ Crear Nivel</button>
+            <button id="lang-btn" class="btn-lang" onclick="toggleLanguage()">🌐 Switch to English</button>
+        </div>
+    </div>
+
+    <div id="difficulty-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 950px;">
+            <h2 style="font-size: 2.2rem; margin-bottom: 10px;" data-i18n="modal_diff_title">Selecciona tu Nivel</h2>
+            <p style="margin-bottom: 20px;" data-i18n="modal_diff_subtitle">¿Qué tan difícil quieres el reto de hoy?</p>
+            
+            <div class="difficulty-cards-container">
+                <div class="diff-card facil-card" onclick="startDifficulty('facil')">
+                    <div class="card-icon">🟢</div>
+                    <h3 data-i18n="card_easy_title">Píxel Novato</h3>
+                    <p data-i18n="card_easy_desc">Formas simples y fáciles de copiar.</p>
+                    <button class="btn-3d btn-play" style="padding: 12px 20px; font-size: 18px; width: 100%; margin:0;" data-i18n="btn_play">Jugar</button>
+                </div>
+                <div class="diff-card medio-card" onclick="startDifficulty('medio')">
+                    <div class="card-icon">🟡</div>
+                    <h3 data-i18n="card_med_title">Artista en Ascenso</h3>
+                    <p data-i18n="card_med_desc">Más detalles y variedad.</p>
+                    <button class="btn-3d btn-edit" style="padding: 12px 20px; font-size: 18px; width: 100%; margin:0;" data-i18n="btn_play">Jugar</button>
+                </div>
+                <div class="diff-card avanzado-card" onclick="startDifficulty('avanzado')">
+                    <div class="card-icon">🔴</div>
+                    <h3 data-i18n="card_adv_title">Maestro del Píxel</h3>
+                    <p data-i18n="card_adv_desc">Diseños complejos y grandes.</p>
+                    <button class="btn-3d btn-action" style="padding: 12px 20px; font-size: 18px; width: 100%; margin:0;" data-i18n="btn_play">Jugar</button>
+                </div>
+            </div>
+            <button class="btn-3d btn-skip" style="width: auto; padding: 12px 40px;" onclick="closeModal('difficulty-modal')" data-i18n="btn_back_menu">⬅ Volver al Menú</button>
+        </div>
+    </div>
+
+    <div id="skip-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 style="font-size: 2rem;" data-i18n="modal_skip_title">¿Saltar Diseño?</h2>
+            <p style="margin-bottom: 30px;" data-i18n="modal_skip_desc">¿Estás seguro de que deseas saltar este diseño y pasar al siguiente?</p>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button class="btn-3d btn-action" onclick="confirmSkip()" data-i18n="btn_yes_skip">Sí, saltar ⏭️</button>
+                <button class="btn-3d btn-skip" style="width: 100%; margin-top: 5px;" onclick="closeModal('skip-modal')" data-i18n="btn_cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="presentation-screen" class="screen hidden">
+        <div class="panel">
+            <h2 data-i18n="presentation_title">Copia este diseño en tu hoja</h2>
+            <div id="presentation-grid" class="grid-container"></div>
+            <button class="btn-3d btn-play" style="margin-top: 40px;" onclick="startSolving()" data-i18n="btn_solve_screen">Resolver en Pantalla ➔</button>
+            <button class="btn-3d btn-skip" style="margin-top: 20px;" onclick="skipLevel()" data-i18n="btn_skip_level">Saltar Nivel ⏭️</button>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen hidden">
+        <div class="split-layout">
+            <div class="split-side panel">
+                <h3 data-i18n="game_target_title">Diseño a copiar</h3>
+                <div id="target-grid" class="grid-container"></div>
+            </div>
+            <div class="split-side panel">
+                <h3 data-i18n="game_canvas_title">Tu lienzo</h3>
+                <div id="player-grid" class="grid-container"></div>
+                <div class="palette-container">
+                    <div class="palette" id="game-palette"></div>
+                </div>
+                <div style="position: relative; width: 100%; height: 70px; margin-top: 20px;">
+                    <button id="skip-btn" class="btn-3d btn-skip" style="position: absolute; width: 100%; top: 0; left: 0; margin: 0; z-index: 1;" onclick="skipLevel()" data-i18n="btn_skip_level">Saltar Nivel ⏭️</button>
+                    <button id="next-level-btn" class="btn-3d btn-play" style="position: absolute; width: 100%; top: 0; left: 0; margin: 0; z-index: 2; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;" onclick="nextLevel()" data-i18n="btn_next_level">¡Siguiente Nivel! ➔</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editor-screen" class="screen hidden">
+        <div class="panel" style="width: 90%; max-width: 600px;">
+            <div class="imaginacion-title" data-i18n="editor_title">Deja volar tu imaginación</div>
+            <div class="editor-subtitle" data-i18n="editor_subtitle">Creador de Niveles</div>
+            <div id="editor-grid" class="grid-container" style="width: 50vmin; max-width: 450px;"></div>
+            <div class="palette-container" style="margin-bottom: 25px;">
+                <div class="palette" id="editor-palette"></div>
+            </div>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <button class="btn-3d btn-skip" style="margin: 0; padding: 20px 30px;" onclick="returnToMenu()" data-i18n="btn_back">Volver</button>
+                <button class="btn-3d btn-play" style="background: linear-gradient(135deg, #A770EF, #CF8BF3); box-shadow: 0 8px 0 #8E54E9; margin: 0;" onclick="openLevelManager()" data-i18n="btn_manage">⚙️ Administrar</button>
+                <button class="btn-3d btn-action" style="margin: 0;" onclick="showSaveModal()" data-i18n="btn_save_level">Guardar Nivel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="save-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 style="font-size: 2rem;" data-i18n="modal_save_title">¿Dificultad del nivel?</h2>
+            <br>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button class="btn-3d btn-play" onclick="saveLevel('facil')" data-i18n="btn_easy">Fácil 🟢</button>
+                <button class="btn-3d btn-edit" onclick="saveLevel('medio')" data-i18n="btn_med">Medio 🟡</button>
+                <button class="btn-3d btn-action" onclick="saveLevel('avanzado')" data-i18n="btn_adv">Avanzado 🔴</button>
+            </div>
+            <br>
+            <button class="btn-3d btn-skip" style="width: 100%; margin-top: 20px;" onclick="closeModal('save-modal')" data-i18n="btn_cancel">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="manager-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 600px;">
+            <h2 style="font-size: 2rem;" data-i18n="modal_manager_title">Gestor de Niveles</h2>
+            <br>
+            <div id="manager-list"></div>
+            <button class="btn-3d btn-skip" style="width: 100%; margin-top: 30px;" onclick="closeModal('manager-modal')" data-i18n="btn_close">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="modal-overlay hidden" style="z-index: 250;">
+        <div class="modal-content">
+            <h2 style="font-size: 2rem; color: #FF4E50;" data-i18n="modal_delete_title">¿Eliminar Nivel?</h2>
+            <p style="margin-bottom: 30px;" data-i18n="modal_delete_desc">Esta acción no se puede deshacer.</p>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button class="btn-3d btn-action" onclick="confirmDelete()" data-i18n="btn_yes_delete">Sí, eliminar 🗑️</button>
+                <button class="btn-3d btn-skip" style="width: 100%; margin-top: 5px;" onclick="closeModal('delete-modal')" data-i18n="btn_cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const i18n = {
+            es: {
+                btn_play_levels: "▶ Jugar Niveles", btn_create_level: "✏️ Crear Nivel", modal_diff_title: "Selecciona tu Nivel", modal_diff_subtitle: "¿Qué tan difícil quieres el reto de hoy?",
+                card_easy_title: "Píxel Novato", card_easy_desc: "Formas simples y fáciles de copiar. Ideal para calentar motores.", card_med_title: "Artista en Ascenso", card_med_desc: "Más detalles y variedad. Pon a prueba tu atención visual.",
+                card_adv_title: "Maestro del Píxel", card_adv_desc: "Diseños complejos y grandes. Solo para expertos detallistas.", btn_play: "Jugar", btn_back_menu: "⬅ Volver al Menú",
+                modal_skip_title: "¿Saltar Diseño?", modal_skip_desc: "¿Estás seguro de que deseas saltar este diseño y pasar al siguiente?", btn_yes_skip: "Sí, saltar ⏭️", btn_cancel: "Cancelar",
+                presentation_title: "Copia este diseño en tu hoja", btn_solve_screen: "Resolver en Pantalla ➔", btn_skip_level: "Saltar Nivel ⏭️", game_target_title: "Diseño a copiar",
+                game_canvas_title: "Tu lienzo", btn_next_level: "¡Siguiente Nivel! ➔", editor_title: "Deja volar tu imaginación", editor_subtitle: "Creador de Niveles",
+                btn_back: "Volver", btn_manage: "⚙️ Administrar", btn_save_level: "Guardar Nivel", modal_save_title: "¿Dificultad del nivel?",
+                btn_easy: "Fácil 🟢", btn_med: "Medio 🟡", btn_adv: "Avanzado 🔴", modal_manager_title: "Gestor de Niveles", btn_close: "Cerrar",
+                modal_delete_title: "¿Eliminar Nivel?", modal_delete_desc: "Esta acción no se puede deshacer. ¿Estás seguro de que deseas borrar este diseño?", btn_yes_delete: "Sí, eliminar 🗑️", watermark: "Juega y Aprende Labs 2026",
+                toast_no_designs: "No hay diseños en esta categoría 😅", toast_finished: "¡Felicidades! Terminaste todos los niveles 🎉", toast_saved: "Nivel guardado con éxito 🎨", toast_saved_temp: "Nivel guardado temporalmente ⚠️",
+                toast_modifying: "Modificando nivel seleccionado ✏️", toast_deleted: "Nivel eliminado 🗑️", manager_easy: "Niveles Fáciles", manager_med: "Niveles Medios", manager_adv: "Niveles Avanzados",
+                manager_empty: "No hay niveles creados aún.", tooltip_home: "Inicio", tooltip_fullscreen: "Pantalla Completa", tooltip_edit: "Editar Nivel", tooltip_up: "Subir", tooltip_down: "Bajar", tooltip_delete: "Eliminar"
+            },
+            en: {
+                btn_play_levels: "▶ Play Levels", btn_create_level: "✏️ Create Level", modal_diff_title: "Select your Level", modal_diff_subtitle: "How difficult do you want today's challenge to be?",
+                card_easy_title: "Pixel Novice", card_easy_desc: "Simple and easy to copy shapes. Ideal for warming up.", card_med_title: "Rising Artist", card_med_desc: "More details and variety. Test your visual attention.",
+                card_adv_title: "Pixel Master", card_adv_desc: "Large and complex designs. Only for detail-oriented experts.", btn_play: "Play", btn_back_menu: "⬅ Back to Menu",
+                modal_skip_title: "Skip Design?", modal_skip_desc: "Are you sure you want to skip this design and move to the next one?", btn_yes_skip: "Yes, skip ⏭️", btn_cancel: "Cancel",
+                presentation_title: "Copy this design on your worksheet", btn_solve_screen: "Solve on Screen ➔", btn_skip_level: "Skip Level ⏭️", game_target_title: "Target design",
+                game_canvas_title: "Your canvas", btn_next_level: "Next Level! ➔", editor_title: "Let your imagination run wild", editor_subtitle: "Level Creator",
+                btn_back: "Back", btn_manage: "⚙️ Manage", btn_save_level: "Save Level", modal_save_title: "Level Difficulty?",
+                btn_easy: "Easy 🟢", btn_med: "Medium 🟡", btn_adv: "Advanced 🔴", modal_manager_title: "Level Manager", btn_close: "Close",
+                modal_delete_title: "Delete Level?", modal_delete_desc: "This action cannot be undone. Are you sure you want to delete this design?", btn_yes_delete: "Yes, delete 🗑️", watermark: "Play & Learn Labs 2026",
+                toast_no_designs: "No designs in this category 😅", toast_finished: "Congratulations! You finished all levels 🎉", toast_saved: "Level saved successfully 🎨", toast_saved_temp: "Level saved temporarily ⚠️",
+                toast_modifying: "Modifying selected level ✏️", toast_deleted: "Level deleted 🗑️", manager_easy: "Easy Levels", manager_med: "Medium Levels", manager_adv: "Advanced Levels",
+                manager_empty: "No levels created yet.", tooltip_home: "Home", tooltip_fullscreen: "Fullscreen", tooltip_edit: "Edit Level", tooltip_up: "Move Up", tooltip_down: "Move Down", tooltip_delete: "Delete"
+            }
+        };
+
+        let currentLang = 'es'; 
+
+        function t(key) { return i18n[currentLang][key] || key; }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('pixelArtLang', lang);
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerText = t(el.getAttribute('data-i18n')); });
+            document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.getAttribute('data-i18n-title')); });
+            const btn = document.getElementById('lang-btn');
+            btn.innerText = (currentLang === 'es') ? '🌐 Switch to English' : '🌐 Cambiar a Español';
+            if (!document.getElementById('manager-modal').classList.contains('hidden')) { renderManagerList(); }
+        }
+
+        function toggleLanguage() { playSound('click'); setLanguage(currentLang === 'es' ? 'en' : 'es'); }
+
+        const colors = ['#000000', '#4b4b4b', '#a8a8a8', '#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#1abc9c', '#3498db', '#9b59b6', '#fd79a8', '#ff9ff3', '#8b4513', '#cd853f', '#f5deb3'];
+        let currentColor = colors[0]; let levels = { facil: [], medio: [], avanzado: [] }; let currentDifficultyQueue = []; let currentLevelData = [];
+        let playerGridData = new Array(100).fill('#ffffff'); let isMouseDown = false; let editingLevel = null; let deletingLevel = null; let audioCtx = null;
+
+        function playSound(type) {
+            try {
+                if (!audioCtx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) audioCtx = new AC(); }
+                if (!audioCtx) return; 
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                if (type === 'click') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(700, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'success') {
+                    osc.type = 'square'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1); osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch(e) { }
+        }
+
+        window.onload = () => {
+            const savedLang = localStorage.getItem('pixelArtLang'); setLanguage(savedLang ? savedLang : 'es');
+            loadLevels(); createPalettes();
+            document.body.onmousedown = () => (isMouseDown = true); document.body.onmouseup = () => (isMouseDown = false);
+            document.body.addEventListener('touchstart', () => (isMouseDown = true), {passive: true}); document.body.addEventListener('touchend', () => (isMouseDown = false), {passive: true});
+        };
+
+               function loadLevels() {
+            // 1. 
+            const misNivelesBase = {"facil":[["#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#fd79a8","#ffffff","#fd79a8","#ff9ff3","#ff9ff3","#fd79a8","#ffffff","#ffffff","#fd79a8","#ff9ff3","#ff9ff3","#fd79a8","#fd79a8","#ff9ff3","#ff9ff3","#ff9ff3","#fd79a8","#fd79a8","#ff9ff3","#ff9ff3","#ff9ff3","#fd79a8","#fd79a8","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#fd79a8","#ffffff","#fd79a8","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#fd79a8","#ffffff","#ffffff","#ffffff","#fd79a8","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#ff9ff3","#ff9ff3","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],["#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#000000","#000000","#000000","#000000","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#000000","#ffffff","#000000","#000000","#ffffff","#000000","#ffffff","#ffffff","#ffffff","#000000","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#000000","#ffffff","#ffffff","#000000","#ffffff","#000000","#ffffff","#ffffff","#000000","#ffffff","#000000","#ffffff","#ffffff","#000000","#ffffff","#ffffff","#e67e22","#e67e22","#ffffff","#ffffff","#000000","#ffffff","#000000","#000000","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#000000","#000000","#ffffff","#000000","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#000000","#ffffff","#ffffff","#ffffff","#000000","#e67e22","#000000","#000000","#e67e22","#000000","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#e67e22","#ffffff","#ffffff","#e67e22","#ffffff","#ffffff","#ffffff"],["#ffffff","#ffffff","#ffffff","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#ffffff","#ffffff","#ffffff","#f1c40f","#ffffff","#ffffff","#f1c40f","#f1c40f","#ffffff","#ffffff","#f1c40f","#ffffff","#ffffff","#f1c40f","#ffffff","#000000","#f1c40f","#f1c40f","#000000","#ffffff","#f1c40f","#ffffff","#cd853f","#cd853f","#f1c40f","#e67e22","#e67e22","#e67e22","#e67e22","#f1c40f","#cd853f","#cd853f","#cd853f","#f1c40f","#f1c40f","#f1c40f","#e67e22","#e67e22","#f1c40f","#f1c40f","#f1c40f","#cd853f","#cd853f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#cd853f","#ffffff","#cd853f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#cd853f","#ffffff","#ffffff","#ffffff","#ffffff","#f1c40f","#f1c40f","#f1c40f","#f1c40f","#ffffff","#ffffff","#ffffff","#ffffff","#e67e22","#e67e22","#e67e22","#ffffff","#ffffff","#e67e22","#e67e22","#e67e22","#ffffff"],["#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#ff9ff3","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#ff9ff3","#ff9ff3","#ff9ff3","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ff9ff3","#ff9ff3","#f1c40f","#ff9ff3","#ff9ff3","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#ff9ff3","#ff9ff3","#ff9ff3","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#ff9ff3","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#ffffff","#2ecc71","#ff9ff3","#ffffff","#ffffff","#ffffff","#ff9ff3","#2ecc71","#ffffff","#2ecc71","#ffffff","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#2ecc71","#2ecc71","#ffffff","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff"]],"medio":[["#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#f1c40f","#ffffff","#ffffff","#f1c40f","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#ffffff","#ffffff","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#ffffff","#ffffff","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#ffffff","#ffffff","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ffffff","#ffffff","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#fd79a8","#ffffff","#ffffff","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ff9ff3","#ffffff"],["#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#fd79a8","#e74c3c","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#ffffff","#e74c3c","#e74c3c","#2ecc71","#2ecc71","#ffffff","#e74c3c","#ffffff","#ffffff","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#8b4513","#8b4513","#8b4513","#8b4513","#8b4513","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#8b4513","#8b4513","#8b4513","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#8b4513","#8b4513","#8b4513","#ffffff","#ffffff","#ffffff"],["#ffffff","#ffffff","#ffffff","#ff9ff3","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ff9ff3","#f1c40f","#ff9ff3","#ffffff","#fd79a8","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ff9ff3","#ffffff","#fd79a8","#f1c40f","#fd79a8","#ffffff","#ffffff","#ffffff","#fd79a8","#ffffff","#ffffff","#2ecc71","#ffffff","#fd79a8","#ffffff","#ff9ff3","#ffffff","#fd79a8","#f1c40f","#fd79a8","#ffffff","#2ecc71","#ffffff","#ffffff","#ff9ff3","#f1c40f","#ff9ff3","#ffffff","#fd79a8","#2ecc71","#ffffff","#ffffff","#2ecc71","#ffffff","#2ecc71","#ff9ff3","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#ffffff","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#cd853f","#8b4513","#8b4513","#cd853f","#8b4513","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#cd853f","#cd853f","#8b4513","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#8b4513","#8b4513","#8b4513","#ffffff","#ffffff","#ffffff"]],"avanzado":[["#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#ffffff","#8b4513","#ffffff","#8b4513","#ffffff","#ffffff","#8b4513","#ffffff","#8b4513","#e74c3c","#8b4513","#8b4513","#8b4513","#8b4513","#ffffff","#8b4513","#ffffff","#8b4513","#8b4513","#8b4513","#8b4513","#f1c40f","#8b4513","#e74c3c","#8b4513","#ffffff","#ffffff","#cd853f","#cd853f","#cd853f","#8b4513","#8b4513","#8b4513","#8b4513","#8b4513","#8b4513","#000000","#cd853f","#000000","#cd853f","#8b4513","#8b4513","#2ecc71","#8b4513","#8b4513","#8b4513","#cd853f","#cd853f","#cd853f","#cd853f","#8b4513","#8b4513","#8b4513","#8b4513","#8b4513","#ffffff","#ffffff","#cd853f","#cd853f","#cd853f","#cd853f","#cd853f","#cd853f","#cd853f","#8b4513","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#ffffff","#ffffff","#8b4513","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],["#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#e67e22","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#1abc9c","#1abc9c","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#9b59b6","#2ecc71","#2ecc71","#2ecc71","#e74c3c","#ffffff","#ffffff","#ffffff","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#e67e22","#2ecc71","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#1abc9c","#1abc9c","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#e74c3c","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#fd79a8","#ffffff","#ffffff","#ffffff","#2ecc71","#2ecc71","#9b59b6","#2ecc71","#f1c40f","#2ecc71","#2ecc71","#2ecc71","#ffffff","#2ecc71","#e67e22","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#2ecc71","#e74c3c","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#8b4513","#8b4513","#ffffff","#ffffff","#ffffff","#ffffff"],["#ffffff","#ffffff","#ffffff","#e74c3c","#e74c3c","#e74c3c","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#e74c3c","#fd79a8","#e74c3c","#e74c3c","#e74c3c","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#e74c3c","#fd79a8","#e74c3c","#e74c3c","#e74c3c","#ffffff","#ffffff","#3498db","#ffffff","#ffffff","#e74c3c","#fd79a8","#e74c3c","#e74c3c","#e74c3c","#ffffff","#3498db","#3498db","#ffffff","#ffffff","#e74c3c","#fd79a8","#e74c3c","#e74c3c","#e74c3c","#ffffff","#ffffff","#3498db","#ffffff","#ffffff","#e74c3c","#e74c3c","#e74c3c","#e74c3c","#e74c3c","#ffffff","#ffffff","#ffffff","#3498db","#ffffff","#ffffff","#e74c3c","#e74c3c","#e74c3c","#ffffff","#ffffff","#ffffff","#ffffff","#3498db","#3498db","#ffffff","#ffffff","#cd853f","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#3498db","#ffffff","#ffffff","#ffffff","#ffffff","#cd853f","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#cd853f","#ffffff","#ffffff","#ffffff"],["#ffffff","#ffffff","#ffffff","#e67e22","#ffffff","#f1c40f","#ffffff","#e67e22","#ffffff","#ffffff","#ffffff","#ffffff","#e67e22","#e67e22","#ffffff","#f1c40f","#ffffff","#e67e22","#e67e22","#ffffff","#ffffff","#ffffff","#e67e22","#e67e22","#e67e22","#e67e22","#e67e22","#e67e22","#e67e22","#ffffff","#ffffff","#ffffff","#ffffff","#e74c3c","#e67e22","#e67e22","#e67e22","#e74c3c","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#e74c3c","#e74c3c","#e67e22","#e74c3c","#e74c3c","#ffffff","#2ecc71","#ffffff","#ffffff","#2ecc71","#ffffff","#e74c3c","#e74c3c","#e74c3c","#ffffff","#2ecc71","#2ecc71","#ffffff","#ffffff","#2ecc71","#2ecc71","#ffffff","#1abc9c","#ffffff","#2ecc71","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#2ecc71","#ffffff","#1abc9c","#ffffff","#1abc9c","#2ecc71","#ffffff","#ffffff","#ffffff","#ffffff","#1abc9c","#2ecc71","#1abc9c","#1abc9c","#1abc9c","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#1abc9c","#1abc9c","#1abc9c","#ffffff","#ffffff","#ffffff"]]};
+
+            // 2.
+            try {
+                let savedLevels = localStorage.getItem('pixelArtLevelsPremium');
+                if (savedLevels) { 
+                    let parsed = JSON.parse(savedLevels); 
+                    if(parsed && parsed.facil) { 
+                        levels = parsed; 
+                        return; 
+                    } 
+                }
+            } catch (e) { }
+            
+            // 3.
+            levels = misNivelesBase;
+        }
+
+
+        function createPalettes() {
+            const createPaletteHTML = (containerId) => {
+                const container = document.getElementById(containerId); container.innerHTML = '';
+                colors.forEach((color, index) => {
+                    const btn = document.createElement('div'); btn.className = 'color-btn' + (index === 0 ? ' selected' : ''); btn.style.backgroundColor = color;
+                    btn.onclick = (e) => selectColor(color, e.target, containerId); container.appendChild(btn);
+                });
+                const eraser = document.createElement('div'); eraser.className = 'color-btn eraser-btn'; eraser.onclick = (e) => selectColor('#ffffff', e.target, containerId); container.appendChild(eraser);
+            };
+            createPaletteHTML('game-palette'); createPaletteHTML('editor-palette');
+        }
+
+        function selectColor(color, element, containerId) {
+            playSound('click'); currentColor = color; const palette = document.getElementById(containerId);
+            palette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected')); element.classList.add('selected');
+        }
+
+        function hideAll() { document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); }
+        function closeModal(id) { playSound('click'); document.getElementById(id).classList.add('hidden'); }
+        function returnToMenu() { playSound('click'); hideAll(); document.querySelectorAll('.modal-overlay').forEach(m => m.classList.add('hidden')); document.getElementById('welcome-screen').classList.remove('hidden'); editingLevel = null; }
+        function toggleFullScreen() { playSound('click'); try { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) document.exitFullscreen(); } } catch(e) {} }
+        function showToast(msg) { const t = document.getElementById('toast-notification'); t.innerText = msg; t.classList.add('show'); setTimeout(() => { t.classList.remove('show'); }, 3000); }
+
+        function openDifficultyModal() { playSound('click'); document.getElementById('difficulty-modal').classList.remove('hidden'); }
+        function startDifficulty(diff) { playSound('click'); currentDifficultyQueue = [...levels[diff]]; if (currentDifficultyQueue.length === 0) { showToast(t('toast_no_designs')); return; } closeModal('difficulty-modal'); loadNextLevelData(); }
+
+        function loadNextLevelData() {
+            if (currentDifficultyQueue.length === 0) { showToast(t('toast_finished')); returnToMenu(); return; }
+            currentLevelData = currentDifficultyQueue.shift(); playerGridData = new Array(100).fill('#ffffff'); renderGrid('presentation-grid', currentLevelData, false); hideAll(); document.getElementById('presentation-screen').classList.remove('hidden');
+        }
+
+        function startSolving() {
+            playSound('click'); const n = document.getElementById('next-level-btn'); const s = document.getElementById('skip-btn');
+            if(n && s) { n.style.opacity = "0"; n.style.pointerEvents = "none"; s.style.opacity = "1"; s.style.pointerEvents = "auto"; }
+            renderGrid('target-grid', currentLevelData, false); renderGrid('player-grid', playerGridData, true, true); hideAll(); document.getElementById('game-screen').classList.remove('hidden');
+        }
+
+        function nextLevel() { playSound('success'); loadNextLevelData(); }
+        function skipLevel() { playSound('click'); document.getElementById('skip-modal').classList.remove('hidden'); }
+        function confirmSkip() { playSound('click'); closeModal('skip-modal'); loadNextLevelData(); }
+        function openEditor() { playSound('click'); editingLevel = null; playerGridData = new Array(100).fill('#ffffff'); renderGrid('editor-grid', playerGridData, true, false); hideAll(); document.getElementById('editor-screen').classList.remove('hidden'); }
+        function showSaveModal() { playSound('click'); document.getElementById('save-modal').classList.remove('hidden'); }
+
+        function saveLevel(diff) {
+            playSound('success'); if (editingLevel) { levels[editingLevel.difficulty].splice(editingLevel.index, 1); editingLevel = null; }
+            levels[diff].push([...playerGridData]);
+            try { localStorage.setItem('pixelArtLevelsPremium', JSON.stringify(levels)); showToast(t('toast_saved')); } catch (e) { showToast(t('toast_saved_temp')); }
+            closeModal('save-modal'); playerGridData = new Array(100).fill('#ffffff'); renderGrid('editor-grid', playerGridData, true, false);
+        }
+
+        function openLevelManager() { playSound('click'); renderManagerList(); document.getElementById('manager-modal').classList.remove('hidden'); }
+        function editLevel(diff, idx) { playSound('click'); editingLevel = { difficulty: diff, index: idx }; playerGridData = [...levels[diff][idx]]; renderGrid('editor-grid', playerGridData, true, false); closeModal('manager-modal'); hideAll(); document.getElementById('editor-screen').classList.remove('hidden'); showToast(t('toast_modifying')); }
+
+    
+
+        function renderManagerList() {
+            const container = document.getElementById('manager-list'); container.innerHTML = '';
+            const difficulties = [ { id: 'facil', nameKey: 'manager_easy', color: '#3BB2B8' }, { id: 'medio', nameKey: 'manager_med', color: '#F9D423' }, { id: 'avanzado', nameKey: 'manager_adv', color: '#FF7EB3' } ];
+            difficulties.forEach(diff => {
+                if (levels[diff.id].length > 0) {
+                    const section = document.createElement('div'); section.className = 'level-manager-section'; section.innerHTML = `<h3 style="color: ${diff.color}; font-size:1.4rem; font-weight:800; letter-spacing:1px; text-transform:none;">${t(diff.nameKey)}</h3>`;
+                    levels[diff.id].forEach((levelData, index) => {
+                        const item = document.createElement('div'); item.className = 'level-item';
+                        let miniGridHTML = '<div class="mini-grid">'; for(let i=0; i<100; i++) miniGridHTML += `<div class="mini-cell" style="background-color: ${levelData[i]}"></div>`; miniGridHTML += '</div>';
+                        item.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 15px;"> <strong style="font-size:1.2rem;">#${index + 1}</strong> ${miniGridHTML} </div>
+                            <div class="level-controls">
+                                <button onclick="editLevel('${diff.id}', ${index})" title="${t('tooltip_edit')}">⚙️</button>
+                                <button onclick="moveLevel('${diff.id}', ${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''} title="${t('tooltip_up')}">⬆️</button>
+                                <button onclick="moveLevel('${diff.id}', ${index}, 1)" ${index === levels[diff.id].length - 1 ? 'disabled style="opacity:0.3"' : ''} title="${t('tooltip_down')}">⬇️</button>
+                                <button class="btn-delete" onclick="deleteLevel('${diff.id}', ${index})" title="${t('tooltip_delete')}">🗑️</button>
+                            </div>
+                        `; section.appendChild(item);
+                    }); container.appendChild(section);
+                }
+            });
+            if (container.innerHTML === '') container.innerHTML = `<p style="text-align:center;">${t('manager_empty')}</p>`;
+            
+    
+        }
+
+        function moveLevel(diff, idx, dir) { playSound('click'); const arr = levels[diff]; const nIdx = idx + dir; if (nIdx >= 0 && nIdx < arr.length) { [arr[idx], arr[nIdx]] = [arr[nIdx], arr[idx]]; try { localStorage.setItem('pixelArtLevelsPremium', JSON.stringify(levels)); } catch(e) {} renderManagerList(); } }
+        function deleteLevel(diff, idx) { playSound('click'); deletingLevel = { difficulty: diff, index: idx }; document.getElementById('delete-modal').classList.remove('hidden'); }
+        function confirmDelete() { playSound('click'); if (deletingLevel) { levels[deletingLevel.difficulty].splice(deletingLevel.index, 1); try { localStorage.setItem('pixelArtLevelsPremium', JSON.stringify(levels)); showToast(t('toast_deleted')); } catch(e) {} renderManagerList(); deletingLevel = null; } closeModal('delete-modal'); }
+
+        function renderGrid(containerId, dataArray, isInteractive, isPlaying = false) {
+            const container = document.getElementById(containerId); container.innerHTML = '';
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div'); cell.className = 'cell'; cell.style.backgroundColor = dataArray[i];
+                if (isInteractive) {
+                    const paint = () => { if (dataArray[i] !== currentColor) { dataArray[i] = currentColor; cell.style.backgroundColor = currentColor; if (isPlaying) checkWinCondition(); } };
+                    cell.onmousedown = (e) => { e.preventDefault(); playSound('click'); paint(); }; cell.onmouseenter = () => { if (isMouseDown) paint(); };
+                    cell.addEventListener('touchstart', (e) => { e.preventDefault(); playSound('click'); paint(); }, {passive: false});
+                    cell.addEventListener('touchmove', (e) => {
+                        e.preventDefault(); if (isMouseDown) { let touch = e.touches[0]; let target = document.elementFromPoint(touch.clientX, touch.clientY);
+                            if (target && target.classList.contains('cell') && target.parentElement.id === containerId) {
+                                let index = Array.from(container.children).indexOf(target); if (dataArray[index] !== currentColor) { dataArray[index] = currentColor; target.style.backgroundColor = currentColor; if (isPlaying) checkWinCondition(); }
+                            }
+                        }
+                    }, {passive: false});
+                } container.appendChild(cell);
+            }
+        }
+
+        function checkWinCondition() {
+            let total = 0; let correct = 0;
+            for (let i = 0; i < 100; i++) { if (currentLevelData[i] !== '#ffffff') { total++; if (playerGridData[i] === currentLevelData[i]) correct++; } }
+            if (total === 0) return; 
+            if ((correct / total) * 100 >= 95) {
+                const n = document.getElementById('next-level-btn'); const s = document.getElementById('skip-btn');
+                if (n && (n.style.opacity === "0" || n.style.opacity === "")) { playSound('success'); n.style.opacity = "1"; n.style.pointerEvents = "auto"; if(s) { s.style.opacity = "0"; s.style.pointerEvents = "none"; } }
+            }
+        }
+    </script>
+</body>
+</html>
